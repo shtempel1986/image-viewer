@@ -32,7 +32,8 @@ var Picture = function (_React$Component) {
     }, {
         key: "_imgZoom",
         value: function _imgZoom(e) {
-            var img = e.currentTarget.children[0];
+            var img = e.currentTarget.children[0],
+                container = e.currentTarget;
             if (e.deltaY < 0) {
                 var width = img.width;
                 img.style.width = width * 1.1 + "px";
@@ -41,8 +42,10 @@ var Picture = function (_React$Component) {
                 var _width = img.width;
                 img.style.width = _width / 1.1 + "px";
             }
-            img.style.marginTop = -img.height / 2 + "px";
-            img.style.marginLeft = -img.width / 2 + "px";
+            img.style.marginTop = -(e.pageY - img.offsetTop - container.offsetTop) * (e.deltaY < 0 ? 1.1 : 1 / 1.1) + "px";
+            img.style.marginLeft = -(e.pageX - img.offsetLeft - container.offsetLeft) * (e.deltaY < 0 ? 1.1 : 1 / 1.1) + "px";
+            img.style.left = e.pageX - container.offsetLeft + "px";
+            img.style.top = e.pageY - container.offsetTop + "px";
         }
     }, {
         key: "_movePicture",

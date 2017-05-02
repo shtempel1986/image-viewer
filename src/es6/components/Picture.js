@@ -6,7 +6,7 @@ class Picture extends React.Component {
     }
 
     _imgZoom(e) {
-        let img = e.currentTarget.children[0];
+        let img = e.currentTarget.children[0], container = e.currentTarget;
         if (e.deltaY < 0) {
             let width = img.width;
             img.style.width = `${width * 1.1}px`
@@ -15,8 +15,10 @@ class Picture extends React.Component {
             let width = img.width;
             img.style.width = `${width / 1.1}px`
         }
-        img.style.marginTop = `${-img.height / 2}px`;
-        img.style.marginLeft = `${-img.width / 2}px`;
+        img.style.marginTop = `${-(e.pageY - img.offsetTop - container.offsetTop)*(e.deltaY < 0?1.1:1/1.1)}px`;
+        img.style.marginLeft = `${-(e.pageX - img.offsetLeft - container.offsetLeft)*(e.deltaY < 0?1.1:1/1.1)}px`;
+        img.style.left = `${e.pageX- container.offsetLeft}px`;
+        img.style.top = `${e.pageY- container.offsetTop}px`;
     }
 
     _movePicture(e) {
