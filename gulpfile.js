@@ -58,7 +58,7 @@ gulp.task("js-libs",()=>{
         .pipe(gulp.dest("src/js"));
 });
 
-gulp.task("watch",["babel", "browserify", "sass", "js-libs", "browser-sync"], () => {
+gulp.task("watch",["browserify", "sass", "js-libs", "browser-sync"], () => {
     gulp.watch("src/es6/**/*.js", ["browserify", browserSync.reload]);
     gulp.watch("src/sass/**/*", ["sass", browserSync.reload]);
     gulp.watch("src/index.html", browserSync.reload);

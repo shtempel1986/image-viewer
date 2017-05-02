@@ -12,6 +12,8 @@ var _Picture = require("./Picture");
 
 var _Picture2 = _interopRequireDefault(_Picture);
 
+require("babel-polyfill");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -73,46 +75,90 @@ var Wrapper = function (_React$Component) {
             }
         }
     }, {
+        key: "getPicture",
+        value: regeneratorRuntime.mark(function getPicture() {
+            var i;
+            return regeneratorRuntime.wrap(function getPicture$(_context) {
+                while (1) {
+                    switch (_context.prev = _context.next) {
+                        case 0:
+                            if (!this.state.pictures.length) {
+                                _context.next = 10;
+                                break;
+                            }
+
+                            i = 0;
+
+                        case 2:
+                            if (!(i < this.state.pictures.length)) {
+                                _context.next = 8;
+                                break;
+                            }
+
+                            _context.next = 5;
+                            return this.state.pictures[i];
+
+                        case 5:
+                            i++;
+                            _context.next = 2;
+                            break;
+
+                        case 8:
+                            _context.next = 11;
+                            break;
+
+                        case 10:
+                            return _context.abrupt("return");
+
+                        case 11:
+                        case "end":
+                            return _context.stop();
+                    }
+                }
+            }, getPicture, this);
+        })
+    }, {
         key: "_addPicture",
         value: function _addPicture(e, ev) {
             var _this2 = this;
 
             e.stopPropagation();
             e.preventDefault();
-            // ev.cancelBubble = "true";
             if (ev.type === "react-drop") {
                 var files = e.dataTransfer.files;
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
+                if (files) {
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
 
-                try {
-                    var _loop = function _loop() {
-                        var file = _step2.value;
-
-                        var fr = new FileReader(),
-                            pictures = _this2.state.pictures;
-                        fr.readAsDataURL(file);
-                        fr.onload = function () {
-                            pictures.push({ src: fr.result });
-                            _this2.setState({ pictures: pictures });
-                        };
-                    };
-
-                    for (var _iterator2 = files[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        _loop();
-                    }
-                } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
-                } finally {
                     try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
+                        for (var _iterator2 = files[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            var _file = _step2.value;
+
+                            if (_file.type.match(/^image/)) {
+                                (function () {
+                                    var fr = new FileReader(),
+                                        pictures = _this2.state.pictures;
+                                    fr.readAsDataURL(_file);
+                                    fr.onload = function () {
+                                        pictures.push({ src: fr.result });
+                                        _this2.setState({ pictures: pictures });
+                                    };
+                                })();
+                            }
                         }
+                    } catch (err) {
+                        _didIteratorError2 = true;
+                        _iteratorError2 = err;
                     } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
+                        try {
+                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                _iterator2.return();
+                            }
+                        } finally {
+                            if (_didIteratorError2) {
+                                throw _iteratorError2;
+                            }
                         }
                     }
                 }
@@ -121,14 +167,30 @@ var Wrapper = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var rows = [],
+                length = this.state.pictures.length,
+                rowsQuantity = Math.ceil(length / 4),
+                rest = length % rowsQuantity,
+                pictureIt = this.getPicture();
+            for (var i = 0; i < rowsQuantity; i++) {
+                var row = [];
+                for (var j = 0; j < Math.floor(length / rowsQuantity) + (rest > 0); j++) {
+                    row.push(React.createElement(_Picture2.default, _extends({}, pictureIt.next().value, { key: j })));
+                }
+                rows.push(React.createElement(
+                    "div",
+                    { className: "row", key: i },
+                    row
+                ));
+                rest--;
+            }
+
             return React.createElement(
                 "div",
                 { className: "wrapper",
                     onDragOver: this._addPicture.bind(this),
                     onDrop: this._addPicture.bind(this) },
-                this.state.pictures.map(function (item, idx) {
-                    return React.createElement(_Picture2.default, _extends({}, item, { key: idx }));
-                })
+                rows
             );
         }
     }]);
